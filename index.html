@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartHire | AI Career Assistant</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="hero">
+
+    <div class="hero-pattern"></div>
+
+    <div class="hero-content">
+        <div class="brand">
+            <span class="rocket">🚀</span>
+            <span>Smart<span>Hire</span></span>
+        </div>
+
+        <p>AI-Powered Resume Analysis & Job Recommendation</p>
+
+        <div class="hero-line"></div>
+    </div>
+
+</header>
+
+
+<!-- ================= MAIN ================= -->
+<main class="container">
+
+    <!-- RESUME + PREDICTION -->
+    <section class="top-grid">
+
+        <!-- Resume Input -->
+        <div class="card resume-card">
+
+            <div class="section-title">
+                <div class="icon purple">📄</div>
+
+                <div>
+                    <h2>Analyze Your Resume</h2>
+                    <p>Paste your resume content below and get AI-powered career insights.</p>
+                </div>
+            </div>
+
+            <form method="POST">
+
+                <textarea
+                    name="resume"
+                    placeholder="Paste your resume here..."
+                    required>{{ resume_text }}</textarea>
+
+                <button type="submit">
+                    ✨ Analyze Resume
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- Prediction -->
+        <div class="card prediction-card">
+
+            <div class="prediction-icon">🤖</div>
+
+            <h3>Predicted Job Category</h3>
+
+            {% if predicted_category %}
+                <div class="prediction">
+                    {{ predicted_category }}
+                </div>
+
+                <div class="confidence">
+                    ✓ Resume successfully classified
+                </div>
+            {% else %}
+                <div class="prediction-placeholder">
+                    Waiting for analysis...
+                </div>
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    {% if recommendations is not none %}
+
+    <!-- ================= RESULTS ================= -->
+    <section class="results-grid">
+
+
+        <!-- JOB RECOMMENDATIONS -->
+        <div class="card jobs-card">
+
+            <div class="section-title">
+                <div class="icon purple">💼</div>
+
+                <div>
+                    <h2>Recommended Jobs</h2>
+                    <p>Top job matches based on your resume</p>
+                </div>
+            </div>
+
+
+            <div class="job-list">
+
+                {% for _, job in recommendations.iterrows() %}
+
+                <div class="job-item">
+
+                    <div class="rank">
+                        {% if loop.index == 1 %}
+                            🥇
+                        {% elif loop.index == 2 %}
+                            🥈
+                        {% elif loop.index == 3 %}
+                            🥉
+                        {% else %}
+                            {{ loop.index }}
+                        {% endif %}
+                    </div>
+
+                    <div class="job-info">
+
+                        <h3>{{ job["Job_Title"] }}</h3>
+
+                        <p>
+                            <strong>Skills:</strong>
+                            {{ job["Skills"] }}
+                        </p>
+
+                    </div>
+
+                    <div class="score-box">
+
+                        <div class="score">
+                            {{ "%.2f"|format(job["Match_Score"]) }}%
+                        </div>
+
+                        <span>Match Score</span>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- SKILL GAP -->
+        <div class="card skills-card">
+
+            <div class="section-title">
+                <div class="icon purple">🎯</div>
+
+                <div>
+                    <h2>Skill Gap Report</h2>
+                    <p>See your strengths and areas to improve</p>
+                </div>
+            </div>
+
+
+            <!-- MATCHED -->
+            <div class="skill-section matched">
+
+                <h3>✓ Matched Skills</h3>
+
+                <div class="skill-container">
+
+                    {% if matched_skills %}
+
+                        {% for skill in matched_skills %}
+                            <span class="skill-pill matched-pill">
+                                {{ skill }}
+                            </span>
+                        {% endfor %}
+
+                    {% else %}
+
+                        <span class="empty-text">
+                            No matched skills detected.
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- MISSING -->
+            <div class="skill-section missing">
+
+                <h3>🚀 Skills to Improve</h3>
+
+                <div class="skill-container">
+
+                    {% if missing_skills %}
+
+                        {% for skill in missing_skills %}
+                            <span class="skill-pill missing-pill">
+                                {{ skill }}
+                            </span>
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="success-message">
+                            🎉 Great! No skill gaps found.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            {% if missing_skills %}
+
+            <div class="tip">
+                <span>💡</span>
+
+                <div>
+                    <strong>Pro Tip</strong>
+                    <p>
+                        Focus on improving the skills above to increase
+                        your chances of matching top job roles.
+                    </p>
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+<footer>
+
+    <div class="footer-brand">
+        🚀 SmartHire
+    </div>
+
+    <p>
+        AI-powered career assistance for smarter job discovery.
+    </p>
+
+    <div class="footer-line"></div>
+
+    <small>SmartHire © 2026 | Resume Analysis • Job Recommendation • Skill Gap Analysis</small>
+
+</footer>
+
+</body>
+</html>
